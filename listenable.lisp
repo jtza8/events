@@ -21,17 +21,3 @@
 (defmethod provides-event-p ((listenable listenable) event)
   (with-slots (provided-events) listenable
     (find event provided-events)))
-
-(defmethod send-event ((listenable listenable) event)
-  (with-slots (provided-events listeners) listenable
-    (unless (find (event-type event) provided-events)
-      (error 'invalid-event
-             :reason :not-provided
-             :listenable listenable
-             :event-type (event-type event)))
-    (dolist (listener (getf listeners (event-type event)))
-      (let ((handler (select-handler listener (event-type event))))
-        (if (not (null handler))
-            (funcall handler listener event)
-            (warn "~S listens for event ~S but doesn't specify a handler."
-                  listener (event-type event)))))))

@@ -52,3 +52,23 @@
               :listenable listenable)
       (setf (getf listeners event-type)
             (delete listener (getf listeners event-type))))))
+
+(defmethod subscriber-p ((listenable listenable) (listener listener) event-type)
+  (find listener (getf (listeners listenable) event-type)))
+
+(defmethod send-event ((listenable listenable) event &rest targets)
+  (with-slots (provided-events listeners) listenable
+    (unless (find (event-type event) provided-events)
+      (error 'invalid-event
+             :reason :not-provided
+             :listenable listenable
+             :event-type (event-type event)))
+    (dolist (listener (if (null targets)
+                          (getf listeners (event-type event))
+                          targets))
+      (let ((handler (select-handler listener (event-type event))))
+        (if (not (null handler))
+            (funcall handler listener event)
+            (warn "Couldn't send event ~s to ~s because ~
+                   it doesn't specify a handler for such an event."
+                  listener (event-type event)))))))

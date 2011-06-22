@@ -6,5 +6,4 @@
   (:use :cl :cl-user :meta-package))
 
 (in-package :events)
-(eval-when (:compile-toplevel)
-  (defconstant +nothing+ (gensym "NOTHING-")))
+(defparameter +nothing+ (gensym "NOTHING-"))
