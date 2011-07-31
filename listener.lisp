@@ -30,3 +30,8 @@
           (loop for (key value) on desired-events by #'cddr
                 when (not (find key event-keys))
                 collect key and collect value))))
+
+(defun no-event-arg (function)
+  (lambda (object event)
+    (declare (ignore event))
+    (funcall function object)))

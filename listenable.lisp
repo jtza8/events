@@ -8,7 +8,6 @@
   ((listeners :initform '()
               :reader listeners)
    (provided-events :initform '()
-                    :initarg :provided-events
                     :reader provided-events)))
 
 (defmethod provide-events ((listenable listenable) &rest events)

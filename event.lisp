@@ -9,8 +9,7 @@
 (defun event-data (event) (cdr event))
 
 (defmacro with-event-keys (keys event &body body)
-  (let ((data (gensym "event")))
-    `(let* ((,data (cdr ,event))
-            ,@(loop for key in keys collect
-                   `(,key (getf ,data ,(intern (symbol-name key) "KEYWORD")))))
-       ,@body)))
+  `(let (,@(loop for key in keys collect
+                `(,key (getf (cdr ,event) 
+                             ,(intern (symbol-name key) "KEYWORD")))))
+     ,@body))
